@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>BKK Trip Itinerary Planner</title>
+  <title>TripEase - AI Itinerary Planner</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>BKK Itinerary Planner</h1>
+  <h1>TripEase</h1>
   <form id="tripForm">
+    <label>Destination: <input type="text" id="destination" required></label>
     <label>Start date: <input type="date" id="startDate" required></label>
     <label>End date: <input type="date" id="endDate" required></label>
-    <button type="submit">Create Itinerary</button>
+    <label>Remarks/Interests: <input type="text" id="remarks"></label>
+    <button type="submit">Generate Itinerary</button>
   </form>
   <div id="itinerary"></div>
   <script src="app.js"></script>

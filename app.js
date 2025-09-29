@@ -1,22 +1,38 @@
 document.getElementById('tripForm').onsubmit = async function(e){
   e.preventDefault();
   let destination = document.getElementById('destination').value;
-  let start = new Date(document.getElementById('startDate').value);
-  let end = new Date(document.getElementById('endDate').value);
+  let startDate = document.getElementById('startDate').value;
+  let endDate = document.getElementById('endDate').value;
   let remarks = document.getElementById('remarks').value;
   let itinDiv = document.getElementById('itinerary');
-  itinDiv.innerHTML = '<em>Generating itinerary...</em>';
-  let dayCount = Math.round((end - start) / 86400000) + 1;
-  // Demo: simple AI mockup for each day
-  setTimeout(() => {
-    let out = `<h2>Suggested Itinerary for ${destination}</h2>`;
-    for(let i = 0; i < dayCount; i++){
-      let day = new Date(start.getTime() + i * 86400000);
-      let dateStr = day.toDateString();
-      out += `<div class="day"><b>Day ${i+1} (${dateStr}):</b><br>
-      Suggested: Explore top attractions, <em>${remarks || 'your chosen interests'}</em>.<br>
-      <textarea rows="2" cols="60" placeholder="Your notes/edits"></textarea></div>`;
+  itinDiv.innerHTML = '<em>Generating itinerary using AI...</em>';
+  
+  let userPrompt = `Plan a travel itinerary (day-by-day, concise) for a trip to ${destination} from ${startDate} to ${endDate}. Interests/remarks: ${remarks}. Show each day with activities, suggested sights, and meals.`;
+
+  // --- AI Fetch Logic ---
+  try {
+    let response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer YOUR_OPENAI_API_KEY', // Insert your OpenAI key
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-3.5-turbo',
+        messages: [{role: 'user', content: userPrompt}],
+        temperature: 0.7,
+        max_tokens: 800
+      })
+    });
+    let data = await response.json();
+
+    if (data.choices && data.choices.length > 0) {
+      let aiPlan = data.choices[0].message.content;
+      itinDiv.innerHTML = `<h2>AI-Generated Itinerary</h2><pre style="white-space:pre-wrap">${aiPlan}</pre>`;
+    } else {
+      itinDiv.innerHTML = '<b>Sorry, no AI response received.</b>';
     }
-    itinDiv.innerHTML = out;
-  }, 1200);
-}
+  } catch (err) {
+    itinDiv.innerHTML = `<b>Error connecting to AI: ${err.message}</b>`;
+  }
+};

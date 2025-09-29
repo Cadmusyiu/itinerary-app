@@ -1,0 +1,4 @@
+body { font-family: Arial, sans-serif; padding: 40px; }
+h1 { color: #d81b60; }
+#itinerary { margin-top: 30px; }
+.day { border-bottom: 1px solid #ccc; margin-bottom: 15px; padding: 10px; }
